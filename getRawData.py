@@ -139,9 +139,11 @@ def dataProcessing(midData):
     finalData.sort_index(inplace=True)
     return finalData
 
+
 def getFirstData(df):
-    df = df[
+    fd = df[
         [
+            "date",
             "volume",
             "stochrsi",
             "stochrsi_6",
@@ -165,10 +167,10 @@ def getFirstData(df):
             "lower",
             "MACD",
             "MACDhist",
-            "return"
+            "return",
         ]
     ]
-    return df
+    return fd
 
 
 frameList = []
@@ -188,29 +190,27 @@ for code in codes:
 midData = pd.concat(frameList)
 finalData = dataProcessing(midData)
 testData = dataProcessing(getStockData("000685"))
-testData
 finalData.to_csv("data.csv")
 
 sns.set()
-plt.rcParams["font.sans-serif"] = ["SimHei"]
-plt.rcParams["axes.unicode_minus"] = False
 corr = finalData.corr()
 f, ax = plt.subplots(figsize=(50, 50))
-sns.heatmap(corr, annot=False, linewidths=2.5, fmt=".2f", ax=ax)
+sns.heatmap(corr, annot=False, linewidths=2.5, fmt=".2f", ax=ax, square=True)
 plt.tight_layout()
-plt.savefig("hot.png", dpi=1000)
+plt.savefig("hot.png", dpi=500)
 plt.show()
 
-testData=getFirstData(testData)
+finalData=pd.read_csv("data.csv")
+testData = getFirstData(testData)
 testData.to_csv("test.csv")
+finalData=pd.read_csv('data.csv')
+finalData = getFirstData(finalData)
 
-finalData=getFirstData(finalData)
+finalData.to_csv("firstData.csv")
 sns.set()
-plt.rcParams["font.sans-serif"] = ["SimHei"]
-plt.rcParams["axes.unicode_minus"] = False
 corr = finalData.corr()
-f, ax = plt.subplots(figsize=(50, 50))
-sns.heatmap(corr, annot=False, linewidths=2.5, fmt=".2f", ax=ax)
+f, ax = plt.subplots(figsize=(20, 20))
+sns.heatmap(corr, annot=False, linewidths=2, fmt=".2f", ax=ax, square=True)
 plt.tight_layout()
-plt.savefig("firstHot.png", dpi=1000)
+plt.savefig("firstHot.png", dpi=500)
 plt.show()
