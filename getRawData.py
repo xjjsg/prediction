@@ -115,11 +115,11 @@ def dataProcessing(midData):
     midData["MACD"], midData["MACDsignal"], midData["MACDhist"] = talib.MACD(
         np.array(midData.close), fastperiod=6, slowperiod=12, signalperiod=9
     )
-    # 缺失值处理
-    midData = midData.dropna(axis=0, how="any")
     # 去无穷值
     df_inf = np.isinf(midData)
     midData[df_inf] = 0
+    # 缺失值处理
+    midData = midData.dropna(axis=0, how="any")
     # 数据标准化
     finalData = midData.iloc[:, 0 : midData.shape[1]]
     scaler = StandardScaler()
@@ -129,14 +129,14 @@ def dataProcessing(midData):
         finalData, columns=list(midData.iloc[:, 0 : midData.shape[1]].columns)
     )
     finalData.drop(["return"], axis=1, inplace=True)
+    midData.reset_index(inplace=True)
+    midData = midData.rename(columns = {'index':'date'})
     finalData.insert(finalData.shape[1], "return", midData["return"].values)
-
-    for i in midData.columns:
-        midData.drop([i], axis=1, inplace=True)
-    for i in finalData.columns:
-        midData.insert(midData.shape[1], i, finalData[i].values)
-    finalData = midData
+    finalData.insert(0, "date", midData["date"].values)
+    finalData.set_index("date", inplace=True)
     finalData.sort_index(inplace=True)
+    finalData.reset_index(inplace=True)
+    finalData = finalData.rename(columns = {'index':'date'})
     return finalData
 
 
@@ -186,31 +186,39 @@ for code in codes:
     if i == 200:
         i = 0
         time.sleep(30)
-    frameList.append(getStockData(code))
-midData = pd.concat(frameList)
-finalData = dataProcessing(midData)
-testData = dataProcessing(getStockData("000685"))
-finalData.to_csv("data.csv")
+    print(code)
+    getFirstData(dataProcessing(getStockData(code))).to_csv("/Users/xjjsgmac/Desktop/prediction/data/"+code+".csv")
 
-sns.set()
-corr = finalData.corr()
-f, ax = plt.subplots(figsize=(50, 50))
-sns.heatmap(corr, annot=False, linewidths=2.5, fmt=".2f", ax=ax, square=True)
-plt.tight_layout()
-plt.savefig("hot.png", dpi=500)
-plt.show()
 
-finalData=pd.read_csv("data.csv")
-testData = getFirstData(testData)
-testData.to_csv("test.csv")
-finalData=pd.read_csv('data.csv')
-finalData = getFirstData(finalData)
 
-finalData.to_csv("firstData.csv")
-sns.set()
-corr = finalData.corr()
-f, ax = plt.subplots(figsize=(20, 20))
-sns.heatmap(corr, annot=False, linewidths=2, fmt=".2f", ax=ax, square=True)
-plt.tight_layout()
-plt.savefig("firstHot.png", dpi=500)
-plt.show()
+
+
+#     frameList.append(getStockData(code))
+
+# midData = pd.concat(frameList)
+# finalData = dataProcessing(midData)
+# testData = dataProcessing(getStockData("000685"))
+# finalData.to_csv("data.csv")
+
+# sns.set()
+# corr = finalData.corr()
+# f, ax = plt.subplots(figsize=(50, 50))
+# sns.heatmap(corr, annot=False, linewidths=2.5, fmt=".2f", ax=ax, square=True)
+# plt.tight_layout()
+# plt.savefig("hot.png", dpi=500)
+# plt.show()
+
+# finalData=pd.read_csv("data.csv")
+# testData = getFirstData(testData)
+# testData.to_csv("test.csv")
+# finalData=pd.read_csv('data.csv')
+# finalData = getFirstData(finalData)
+
+# finalData.to_csv("firstData.csv")
+# sns.set()
+# corr = finalData.corr()
+# f, ax = plt.subplots(figsize=(20, 20))
+# sns.heatmap(corr, annot=False, linewidths=2, fmt=".2f", ax=ax, square=True)
+# plt.tight_layout()
+# plt.savefig("firstHot.png", dpi=500)
+# plt.show()
