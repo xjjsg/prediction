@@ -1,4 +1,3 @@
-import time
 import akshare as ak
 import math
 import pandas as pd
@@ -165,8 +164,4 @@ with open("codes.txt") as f:
         line = line.strip("\n")
         codes.append(line)
 for code in codes:
-    # i = i + 1
-    # if i == 200:
-    #     i = 0
-    #     time.sleep(30)
     getFirstData(dataProcessing(getStockData(code))).to_csv("/Users/xjjsgmac/Desktop/prediction/data/"+code+".csv")
