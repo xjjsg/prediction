@@ -18,11 +18,21 @@ from sklearn.model_selection import train_test_split
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-df = pd.read_csv('firstData.csv')
-df.set_index('date', inplace=True)
-model.add(TimeDistributed(Conv2D(...))
-model.add(TimeDistributed(MaxPooling2D(...)))
-model.add(TimeDistributed(Flatten()))
-# define LSTM model
-model.add(LSTM(...))
-model.add(Dense(...))
+codes = []
+datas=[]
+with open("codes.txt") as f:
+    for line in f.readlines():
+        line = line.strip("\n")
+        codes.append(line)
+for i in codes:
+    df=pd.read_csv('data/'+i+'.csv')
+    df.drop('Unnamed: 0', axis=1,inplace=True)
+    datas.append(df)
+
+
+# model.add(TimeDistributed(Conv2D(...))
+# model.add(TimeDistributed(MaxPooling2D(...)))
+# model.add(TimeDistributed(Flatten()))
+# # define LSTM model
+# model.add(LSTM(...))
+# model.add(Dense(...))

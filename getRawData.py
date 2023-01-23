@@ -6,16 +6,12 @@ import numpy as np
 import stockstats
 from sklearn.preprocessing import StandardScaler
 import talib
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 
 def getReturnRate(close, close1):
     if close == 0:
         return 0.0
     else:
         return math.log(close1 / close)
-
 
 def getStockData(code):
     dailyFrame = ak.stock_zh_a_hist(
@@ -31,7 +27,6 @@ def getStockData(code):
     dailyFrame.drop([len(dailyFrame) - 1], inplace=True)
     dailyFrame.loc[:, "return"] = returnRate
     return dailyFrame
-
 
 def dataProcessing(midData):
     midData.rename(
@@ -139,28 +134,20 @@ def dataProcessing(midData):
     finalData = finalData.rename(columns = {'index':'date'})
     return finalData
 
-
 def getFirstData(df):
     fd = df[
         [
             "date",
             "volume",
             "stochrsi",
-            "stochrsi_6",
             "wt2",
             "trix",
             "vr",
             "vr_6",
-            "wr",
-            "cci",
-            "cci_6",
             "atr_5",
             "dma",
-            "pdi",
-            "mdi",
             "dx",
             "adxr",
-            "kdj-k",
             "kdj-j",
             "bias_6",
             "ROC",
@@ -172,53 +159,14 @@ def getFirstData(df):
     ]
     return fd
 
-
-frameList = []
-i = 0
 codes = []
 with open("codes.txt") as f:
     for line in f.readlines():
         line = line.strip("\n")
         codes.append(line)
-
 for code in codes:
-    i = i + 1
-    if i == 200:
-        i = 0
-        time.sleep(30)
-    print(code)
+    # i = i + 1
+    # if i == 200:
+    #     i = 0
+    #     time.sleep(30)
     getFirstData(dataProcessing(getStockData(code))).to_csv("/Users/xjjsgmac/Desktop/prediction/data/"+code+".csv")
-
-
-
-
-
-#     frameList.append(getStockData(code))
-
-# midData = pd.concat(frameList)
-# finalData = dataProcessing(midData)
-# testData = dataProcessing(getStockData("000685"))
-# finalData.to_csv("data.csv")
-
-# sns.set()
-# corr = finalData.corr()
-# f, ax = plt.subplots(figsize=(50, 50))
-# sns.heatmap(corr, annot=False, linewidths=2.5, fmt=".2f", ax=ax, square=True)
-# plt.tight_layout()
-# plt.savefig("hot.png", dpi=500)
-# plt.show()
-
-# finalData=pd.read_csv("data.csv")
-# testData = getFirstData(testData)
-# testData.to_csv("test.csv")
-# finalData=pd.read_csv('data.csv')
-# finalData = getFirstData(finalData)
-
-# finalData.to_csv("firstData.csv")
-# sns.set()
-# corr = finalData.corr()
-# f, ax = plt.subplots(figsize=(20, 20))
-# sns.heatmap(corr, annot=False, linewidths=2, fmt=".2f", ax=ax, square=True)
-# plt.tight_layout()
-# plt.savefig("firstHot.png", dpi=500)
-# plt.show()
